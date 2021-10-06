@@ -70,6 +70,9 @@ public class JsonUtil {
     }
 
     public static <T> List<T> Json2Array(String jsonData, Class<T> beanType) {
+        if (jsonData.isEmpty()) {
+            return null;
+        }
         JSONArray jsonArray = JSONArray.fromObject(jsonData);
         //Java集合
         List<T> list = (List<T>) jsonArray.toCollection(jsonArray, beanType);

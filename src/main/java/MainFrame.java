@@ -31,7 +31,11 @@ public class MainFrame{
     private void initRecord() {
         String jsonData = FileUtil.readContent("record.json");
         List<RecordEntity> recordEntities = JsonUtil.Json2Array(jsonData, RecordEntity.class);
-        records = new HashSet<>(recordEntities);
+        records = new HashSet<>();
+        if (recordEntities == null) {
+            return;
+        }
+        records.addAll(recordEntities);
         for (RecordEntity recordEntity : records) {
             comb_frequency.addItem(recordEntity);
         }
@@ -175,6 +179,9 @@ public class MainFrame{
             public void itemStateChanged(ItemEvent e) {
                 RecordEntity recordEntity = (RecordEntity) e.getItem();
                 File srcFile = new File(recordEntity.getSrc());
+                if (!srcFile.exists()) {
+                    return;
+                }
                 selectPath = recordEntity.getSrc();
                 files = new ArrayList<>();
                 selectedFiles = new ArrayList<>();
