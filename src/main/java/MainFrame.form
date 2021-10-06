@@ -37,6 +37,10 @@
             <properties/>
             <border type="none"/>
             <children>
+              <component id="8d286" class="javax.swing.JComboBox" binding="comb_frequency">
+                <constraints/>
+                <properties/>
+              </component>
               <component id="64579" class="javax.swing.JButton" binding="btn_chooseFile">
                 <constraints/>
                 <properties>
@@ -47,6 +51,12 @@
                 <constraints/>
                 <properties>
                   <text value="清空日志"/>
+                </properties>
+              </component>
+              <component id="e335b" class="javax.swing.JButton" binding="btn_saveRecord">
+                <constraints/>
+                <properties>
+                  <text value="保存记录"/>
                 </properties>
               </component>
             </children>
