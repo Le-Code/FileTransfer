@@ -1,12 +1,13 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class RecordEntity {
     private String src;
     private String dst;
-    private List<String> selected;
+    private List<FileEntity> subFiles;
 
     public String getSrc() {
         return src;
@@ -24,12 +25,12 @@ public class RecordEntity {
         this.dst = dst;
     }
 
-    public List<String> getSelected() {
-        return selected;
+    public void setSelected(List<FileEntity> subFiles) {
+        this.subFiles = new ArrayList<>(subFiles);
     }
 
-    public void setSelected(List<String> selected) {
-        this.selected = selected;
+    public List<FileEntity> getSubFiles() {
+        return subFiles;
     }
 
     @Override
@@ -38,12 +39,12 @@ public class RecordEntity {
         if (o == null || getClass() != o.getClass()) return false;
         RecordEntity that = (RecordEntity) o;
         StringBuilder sb1 = new StringBuilder();
-        for (String s : selected) {
+        for (FileEntity s : subFiles) {
             sb1.append(s);
         }
 
         StringBuilder sb2 = new StringBuilder();
-        for (String s : that.getSelected()) {
+        for (FileEntity s : that.getSubFiles()) {
             sb2.append(s);
         }
         return Objects.equals(src, that.src) &&
@@ -53,7 +54,7 @@ public class RecordEntity {
     @Override
     public int hashCode() {
         StringBuilder sb = new StringBuilder();
-        for (String s : selected) {
+        for (FileEntity s : subFiles) {
             sb.append(s);
         }
         return Objects.hash(src, dst, sb.toString());

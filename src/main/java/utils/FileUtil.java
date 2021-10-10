@@ -19,8 +19,12 @@ public class FileUtil {
 
     public static String readContent(String path) {
         BufferedReader br = null;
+        File recordFile = new File(path);
+        if (!recordFile.exists()) {
+            return null;
+        }
         try {
-            br = new BufferedReader(new FileReader(path));
+            br = new BufferedReader(new FileReader(recordFile));
             StringBuffer sb = new StringBuffer();
             String line = null;
             while ((line = br.readLine()) != null) {

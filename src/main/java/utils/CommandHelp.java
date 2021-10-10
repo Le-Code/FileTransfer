@@ -15,7 +15,7 @@ public class CommandHelp {
             StringBuffer sb = new StringBuffer();
             String line = null;
             while ((line = br.readLine()) != null) {
-                sb.append(line);
+                sb.append(line + "\n");
             }
             if (listener != null) {
                 listener.onSuccess(sb.toString());

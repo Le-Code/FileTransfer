@@ -27,12 +27,12 @@
           </component>
         </children>
       </grid>
-      <grid id="abebd" binding="contentContainer" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="abebd" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="7ef24" binding="fileFindPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+          <grid id="7ef24" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
             <constraints border-constraint="North"/>
             <properties/>
             <border type="none"/>
@@ -53,15 +53,15 @@
                   <text value="清空日志"/>
                 </properties>
               </component>
-              <component id="e335b" class="javax.swing.JButton" binding="btn_saveRecord">
+              <component id="7f309" class="javax.swing.JButton" binding="btn_rmRecord">
                 <constraints/>
                 <properties>
-                  <text value="保存记录"/>
+                  <text value="删除记录"/>
                 </properties>
               </component>
             </children>
           </grid>
-          <grid id="c8c3e" binding="logPanel" layout-manager="CardLayout" hgap="0" vgap="0">
+          <grid id="c8c3e" layout-manager="CardLayout" hgap="0" vgap="0">
             <constraints border-constraint="South"/>
             <properties/>
             <border type="none"/>
@@ -86,63 +86,126 @@
               </scrollpane>
             </children>
           </grid>
-          <grid id="82341" binding="operatePanel" layout-manager="CardLayout" hgap="0" vgap="0">
+          <grid id="82341" layout-manager="CardLayout" hgap="0" vgap="0">
             <constraints border-constraint="Center"/>
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="151c5" binding="fileContentsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="151c5" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
                   <card name="Card1"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <grid id="3b36" binding="fileOperatePanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                  <grid id="3b36" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints border-constraint="North"/>
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="dea21" class="javax.swing.JCheckBox" binding="cb_selectAllFiles">
-                        <constraints/>
-                        <properties>
-                          <text value="全选"/>
-                        </properties>
-                      </component>
-                      <component id="25989" class="javax.swing.JButton" binding="btn_send">
-                        <constraints/>
-                        <properties>
-                          <text value="推送"/>
-                        </properties>
-                      </component>
-                      <component id="736c4" class="javax.swing.JTextField" binding="jtf_dstPath">
-                        <constraints/>
-                        <properties>
-                          <columns value="20"/>
-                          <foreground color="-3355444"/>
-                          <text value="input dst path"/>
-                          <verifyInputWhenFocusTarget value="true"/>
-                        </properties>
-                      </component>
+                      <grid id="174aa" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="dea21" class="javax.swing.JCheckBox" binding="cb_selectAllFiles">
+                            <constraints/>
+                            <properties>
+                              <text value="全选"/>
+                            </properties>
+                          </component>
+                          <component id="25989" class="javax.swing.JButton" binding="btn_send">
+                            <constraints/>
+                            <properties>
+                              <text value="推送"/>
+                            </properties>
+                          </component>
+                          <component id="fa0ac" class="javax.swing.JCheckBox" binding="cb_reboot">
+                            <constraints/>
+                            <properties>
+                              <text value="重启"/>
+                            </properties>
+                          </component>
+                          <component id="736c4" class="javax.swing.JTextField" binding="jtf_dstPath">
+                            <constraints/>
+                            <properties>
+                              <columns value="20"/>
+                              <foreground color="-3355444"/>
+                              <text value="input dst path"/>
+                              <verifyInputWhenFocusTarget value="true"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <grid id="cc253" binding="pane_showSelect" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="South"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="1f981" class="javax.swing.JLabel" binding="label_selectPath">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="select path:"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
                     </children>
                   </grid>
-                  <scrollpane id="f3ada" binding="fileListPanel">
+                  <grid id="22134" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints border-constraint="Center"/>
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="8c6db" class="javax.swing.JList" binding="fileList">
-                        <constraints/>
-                        <properties>
-                          <model/>
-                        </properties>
-                      </component>
+                      <scrollpane id="81dff">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="cc1b6" class="javax.swing.JList" binding="fileList">
+                            <constraints/>
+                            <properties>
+                              <layoutOrientation value="0"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
                     </children>
-                  </scrollpane>
+                  </grid>
                 </children>
               </grid>
             </children>
           </grid>
+        </children>
+      </grid>
+      <grid id="64edc" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="d45e1" class="javax.swing.JTextField" binding="tf_command">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="5b31f" class="javax.swing.JButton" binding="btn_exec">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="执行"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>

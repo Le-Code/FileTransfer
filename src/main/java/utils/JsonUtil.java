@@ -1,8 +1,10 @@
 package utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.SignBean;
 import net.sf.json.JSONArray;
 
 import java.util.List;
@@ -65,6 +67,9 @@ public class JsonUtil {
 
     public static <T> String Array2Json(List<T> beans) {
         //创建json集合
+        for (T bean : beans) {
+            System.out.println(objectToJson(bean));
+        }
         JSONArray jsonArray = JSONArray.fromObject(beans);
         return jsonArray.toString();
     }
@@ -77,5 +82,15 @@ public class JsonUtil {
         //Java集合
         List<T> list = (List<T>) jsonArray.toCollection(jsonArray, beanType);
         return list;
+    }
+
+    public static SignBean readSignInfo(String signConfig) {
+        String jsonData = FileUtil.readContent(signConfig);
+        JSONObject jsonObject = JSONObject.parseObject(jsonData);
+        String username = jsonObject.getString("username");
+        String password = jsonObject.getString("password");
+        String jarPath = jsonObject.getString("jarPath");
+        SignBean signBean = new SignBean(username, password, jarPath);
+        return signBean;
     }
 }
