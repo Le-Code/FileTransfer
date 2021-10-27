@@ -2,6 +2,8 @@ package utils;
 
 import javax.swing.text.StringContent;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtil {
     public static void writeContent(String str, String path) {
@@ -31,6 +33,31 @@ public class FileUtil {
                 sb.append(line);
             }
             return sb.toString();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            CloseUtil.close(br);
+        }
+    }
+
+    public static List<String> readLineContent(String path) {
+        BufferedReader br = null;
+        File recordFile = new File(path);
+        if (!recordFile.exists()) {
+            return null;
+        }
+        try {
+            List<String> contents = new ArrayList<>();
+            br = new BufferedReader(new FileReader(recordFile));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                contents.add(line);
+            }
+            return contents;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
