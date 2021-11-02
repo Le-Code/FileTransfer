@@ -1,5 +1,6 @@
 import listener.LogCallback;
 import listener.RuntimeExecListener;
+import sun.awt.image.URLImageSource;
 import utils.CommandHelp;
 import view.impl.ExecFileViewContainer;
 import view.impl.InstallHapViewContainer;
@@ -39,6 +40,17 @@ public class MainFrame implements LogCallback {
     }
 
     public MainFrame() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         InitView();
         initEvent();
     }

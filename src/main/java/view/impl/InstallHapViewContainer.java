@@ -38,6 +38,7 @@ public class InstallHapViewContainer implements ViewContainer {
     private JList fileList;
     private JComboBox comb_frequency;
     private JButton btn_chooseFile;
+    private JCheckBox cb_execMode;
     private List<FileEntity> files;
     private String selectPath;
     private Set<RecordEntity> records;
@@ -259,7 +260,7 @@ public class InstallHapViewContainer implements ViewContainer {
     }
 
     private void initView() {
-
+        comb_frequency.setPrototypeDisplayValue("xxxxxxxx");
     }
 
     private void showFileDetail(File selectFile) {

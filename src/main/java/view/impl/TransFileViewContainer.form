@@ -73,6 +73,12 @@
                   <verifyInputWhenFocusTarget value="true"/>
                 </properties>
               </component>
+              <component id="89c8a" class="javax.swing.JCheckBox" binding="cb_execMode">
+                <constraints/>
+                <properties>
+                  <text value="hdc"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>

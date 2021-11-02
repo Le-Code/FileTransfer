@@ -1,5 +1,6 @@
-package dao;
+package dao.impl;
 
+import dao.CommandExecutor;
 import listener.RuntimeExecListener;
 
 public class AdbCommandExecutor extends CommandExecutor {

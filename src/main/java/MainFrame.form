@@ -10,7 +10,8 @@
       <tabbedpane id="ebb9" binding="contentTabbedPane">
         <constraints border-constraint="Center"/>
         <properties>
-          <foreground color="-4516271"/>
+          <font style="0"/>
+          <foreground color="-16515070"/>
           <tabPlacement value="1"/>
         </properties>
         <border type="none"/>

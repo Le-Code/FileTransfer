@@ -112,5 +112,6 @@ public class ExecFileViewContainer implements ViewContainer {
     }
 
     private void initView() {
+        comb_frequency.setPrototypeDisplayValue("xxxxxxxx");
     }
 }
