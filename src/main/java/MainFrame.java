@@ -1,7 +1,11 @@
+import dao.CommandExecutor;
+import dao.CommandExecutorFactory;
+import dao.ExecWorker;
+import entity.ConfigInfo;
 import listener.LogCallback;
 import listener.RuntimeExecListener;
-import sun.awt.image.URLImageSource;
 import utils.CommandHelp;
+import utils.FileUtil;
 import view.impl.ExecFileViewContainer;
 import view.impl.InstallHapViewContainer;
 import view.impl.TransFileViewContainer;
@@ -16,10 +20,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MainFrame implements LogCallback {
+    private ExecWorker worker;
+    private CommandExecutor commandExecutor;
 
     private String generateLogStr(String str) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh::mm::ss");
-        String logStr = formatter.format(new Date()) + " " + str + "\n";
+        String logStr = formatter.format(new Date()) + " " + str + FileUtil.getLineSep();
         return logStr;
     }
 
@@ -40,19 +46,17 @@ public class MainFrame implements LogCallback {
     }
 
     public MainFrame() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-        InitView();
+        initView();
         initEvent();
+        initInstance();
+    }
+
+    private void initInstance() {
+        worker = ExecWorker.getInstance();
+        worker.startWorker();
+        commandExecutor = CommandExecutorFactory.chooseExecMode(CommandExecutorFactory.Mode.ADB);
+        commandExecutor.setWorker(worker);
+        ConfigInfo.getInstance();
     }
 
     private void initEvent() {
@@ -99,12 +103,36 @@ public class MainFrame implements LogCallback {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String command = tf_command.getText().trim();
-                execCommand(command);
+                commandExecutor.executeAsyncString(command, new RuntimeExecListener() {
+                    @Override
+                    public void onSuccess(String str) {
+                        ta_showLog.append(generateLogStr(str));
+                    }
+
+                    @Override
+                    public void onFailure(String str) {
+                        ta_showLog.append(generateLogStr(str));
+                    }
+                });
             }
         });
     }
 
-    private void InitView() {
+    private void initView() {
+        // set System UI
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
+        // init table view
         ViewContainer transFileViewContainer = new TransFileViewContainer(this);
         contentTabbedPane.add(transFileViewContainer.getView(), "传输文件");
         ViewContainer installHapViewContainer = new InstallHapViewContainer(this);
@@ -115,7 +143,8 @@ public class MainFrame implements LogCallback {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("MainFrame");
-        frame.setContentPane(new MainFrame().mainContainer);
+        MainFrame mainFrame = new MainFrame();
+        frame.setContentPane(mainFrame.mainContainer);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(frame);

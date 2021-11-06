@@ -29,7 +29,7 @@
               </component>
             </children>
           </grid>
-          <grid id="43835" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="43835" binding="pane_showSelect" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints border-constraint="South"/>
             <properties/>
             <border type="none"/>

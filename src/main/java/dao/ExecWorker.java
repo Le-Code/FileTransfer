@@ -1,7 +1,10 @@
 package dao;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import entity.WorkerEvent;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
@@ -10,43 +13,73 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ExecWorker {
     private static ExecWorker worker;
-    private static final int MAX_EVENT = 100;
+    private static int MAX_EVENT = 100;
+    private static int count = 0;
 
-    private BlockingQueue<Runnable> events;
+    private LinkedList<Runnable> events;
     private boolean stop;
     private Lock lock;
     private Condition emptyCondition;
     private Condition fullCondition;
-
-    private Consumer consumer;
-    private Producer producer;
+    private ExecutorService produceThreadPool;
+    private ExecutorService consumerThreadPool;
+    private List<Consumer> consumers;
 
     private ExecWorker() {
-        events = new ArrayBlockingQueue<Runnable>(MAX_EVENT);
+        events = new LinkedList<>();
         stop = false;
         lock = new ReentrantLock();
         emptyCondition = lock.newCondition();
         fullCondition = lock.newCondition();
     }
 
-    public static ExecWorker GetInstance() {
+    public static ExecWorker getInstance() {
         if (worker == null) {
             worker = new ExecWorker();
-            worker.startWorker();
+            worker.init();
         }
         return worker;
     }
 
-    private void startWorker() {
-        producer = new Producer();
-        consumer = new Consumer();
-        ExecutorService threadPool = Executors.newFixedThreadPool(2);
-        threadPool.execute(producer);
-        threadPool.execute(consumer);
+    private void init() {
+        consumerThreadPool = Executors.newFixedThreadPool(4);
+        produceThreadPool = Executors.newFixedThreadPool(4);
+        consumers = new ArrayList<>();
+    }
+
+    public void startWorker() {
+        Consumer consumer = new Consumer();
+        consumerThreadPool.execute(consumer);
+        consumers.add(consumer);
     }
 
     public void pushWork(Runnable r) {
-        producer.pushEvent(r);
+        produceThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    lock.lock();
+                    if (events.size() >= MAX_EVENT) {
+                        fullCondition.await();
+                    }
+                    events.offer(r);
+                    System.out.println(Thread.currentThread().getName() + " receive " + r.toString() + ", size " + events.size());
+                    emptyCondition.signal();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    lock.unlock();
+                }
+            }
+        });
+    }
+
+    public void stop() {
+        for (Consumer c : consumers) {
+            c.stop();
+        }
+        produceThreadPool.shutdown();
+        consumerThreadPool.shutdown();
     }
 
     private class Consumer implements Runnable {
@@ -55,41 +88,31 @@ public class ExecWorker {
         public void run() {
             while (!stop) {
                 try {
+                    lock.lock();
                     if (events.isEmpty()) {
                         emptyCondition.await();
                     }
-                    Runnable event = events.take();
-                    event.run();
+                    Runnable event = events.poll();
+                    if (event != null) {
+                        event.run();
+                        System.out.println("do thing " + (++count));
+                    }
                     fullCondition.signal();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } finally {
+                    lock.unlock();
                 }
             }
         }
-    }
 
-    private class Producer implements Runnable {
-        private Runnable event;
-        private final Object o = new Object();
-
-        public synchronized void pushEvent(Runnable event) {
-            this.event = event;
-            o.notify();
-        }
-
-        @Override
-        public void run() {
-            while (!stop) {
-                try {
-                    o.wait();
-                    if (events.size() >= MAX_EVENT) {
-                        fullCondition.await();
-                    }
-                    events.offer(event);
-                    emptyCondition.signal();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        public void stop() {
+            stop = true;
+            try {
+                lock.lock();
+                emptyCondition.signalAll();
+            } finally {
+                lock.unlock();
             }
         }
     }

@@ -68,4 +68,9 @@ public class FileUtil {
             CloseUtil.close(br);
         }
     }
+
+    public static String getLineSep() {
+        String lineSep = System.getProperty("line.separator");
+        return lineSep;
+    }
 }

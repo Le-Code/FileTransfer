@@ -3,14 +3,52 @@ package dao.impl;
 import dao.CommandExecutor;
 import listener.RuntimeExecListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HdcCommandExecutor extends CommandExecutor {
     @Override
-    public void installHap(String hapPath, String dstPath, RuntimeExecListener listener) {
-
+    public void installHap(List<String> hapPaths, String dstPath, boolean sign, RuntimeExecListener listener) {
+        if (worker == null) {
+            listener.onFailure("application error");
+            return;
+        }
+        worker.pushWork(new Runnable() {
+            @Override
+            public void run() {
+                List<String> execPaths = new ArrayList<>(hapPaths);
+                if (sign) {
+                    execPaths = signHap(hapPaths, listener);
+                    if (execPaths == null) {
+                        listener.onFailure("signed error");
+                        return;
+                    }
+                }
+                for (String hapPath : execPaths) {
+                    String command = "hdc shell install -p " + hapPath;
+                    executeSyncString(command, listener);
+                }
+            }
+        });
     }
 
     @Override
-    public void sendFile(String filePath, String dstPath, RuntimeExecListener listener) {
-
+    public void sendFile(List<String> srcPaths, String dstPath, boolean reboot, RuntimeExecListener listener) {
+        if (worker == null) {
+            listener.onFailure("application error");
+            return;
+        }
+        worker.pushWork(new Runnable() {
+            @Override
+            public void run() {
+                for (String srcPath : srcPaths) {
+                    String command = "hdc file send " + srcPath + " " + dstPath;
+                    executeSyncString(command, listener);
+                }
+                if (reboot) {
+                    executeSyncString("hdc reboot", null);
+                }
+            }
+        });
     }
 }

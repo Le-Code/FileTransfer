@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.BaseFileView">
+  <grid id="27dc6" binding="MainContainer" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="c3004" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="3b3f0" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+            <constraints border-constraint="North"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="5b024" class="javax.swing.JComboBox" binding="comb_frequency">
+                <constraints/>
+                <properties/>
+              </component>
+              <component id="7b91d" class="javax.swing.JButton" binding="btn_chooseFile">
+                <constraints/>
+                <properties>
+                  <text value="查找"/>
+                </properties>
+              </component>
+              <component id="e3526" class="javax.swing.JButton" binding="btn_initEnv">
+                <constraints/>
+                <properties>
+                  <text value="初始化"/>
+                </properties>
+              </component>
+              <component id="1e5c4" class="javax.swing.JCheckBox" binding="cb_hdcMode">
+                <constraints/>
+                <properties>
+                  <text value="hdc"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="c557d" binding="pane_showSelect" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+            <constraints border-constraint="South"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="bb490" class="javax.swing.JCheckBox" binding="cb_selectAllFiles">
+                <constraints/>
+                <properties>
+                  <text value="全选"/>
+                </properties>
+              </component>
+              <component id="1df7" class="javax.swing.JLabel" binding="label_selectPath">
+                <constraints/>
+                <properties>
+                  <text value="select path:"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="51e74" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="b9ad7" layout-manager="CardLayout" hgap="0" vgap="0">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="2c1cd">
+                <constraints>
+                  <card name="Card2"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="848d3" class="javax.swing.JList" binding="fileList">
+                    <constraints/>
+                    <properties>
+                      <layoutOrientation value="0"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

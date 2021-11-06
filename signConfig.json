@@ -1,5 +1,16 @@
 {
-  "jarPath": "sss",
-  "username": "aaaa",
-  "password": "sdd"
+  "sign": {
+    "jarPath": "sss",
+    "username": "aaaa",
+    "password": "sdd"
+  },
+  "initExecEnv": {
+    "adb": [
+      "adb kill-service",
+      "adb devices"
+    ],
+    "hdc": [
+      "hdc start -r"
+    ]
+  }
 }

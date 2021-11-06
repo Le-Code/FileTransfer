@@ -2,19 +2,28 @@ package view.impl;
 
 import adapter.FileCellRender;
 import adapter.FileListMode;
+import dao.CommandExecutor;
+import dao.CommandExecutorFactory;
+import dao.ExecWorker;
 import entity.FileEntity;
 import entity.RecordEntity;
 import listener.LogCallback;
+import listener.RuntimeExecListener;
 import utils.FileUtil;
 import view.ViewContainer;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,12 +35,16 @@ public class ExecFileViewContainer implements ViewContainer {
     private JTextArea ta_showContent;
     private JButton btn_exec;
     private JLabel label_selectPath;
+    private JPanel pane_showSelect;
     private LogCallback logCallback;
 
     private List<FileEntity> files;
     private String selectPath;
     private Set<RecordEntity> records;
     private FileEntity preSelectEntity;
+    private ExecWorker worker;
+
+    protected CommandExecutor commandExecutor;
 
     @Override
     public JPanel getView() {
@@ -42,6 +55,25 @@ public class ExecFileViewContainer implements ViewContainer {
         this.logCallback = logCallback;
         initView();
         initEvent();
+        initInstance();
+    }
+
+    private void initInstance() {
+        records = new HashSet<>();
+        worker = ExecWorker.getInstance();
+        worker.startWorker();
+        commandExecutor = CommandExecutorFactory.chooseExecMode(CommandExecutorFactory.Mode.HDC);
+        commandExecutor.setWorker(worker);
+    }
+
+    private void addRecord() {
+        RecordEntity recordEntity = new RecordEntity();
+        recordEntity.setSrc(selectPath);
+
+        recordEntity.setSelected(files);
+        if (records.add(recordEntity)) {
+            comb_frequency.addItem(recordEntity);
+        }
     }
 
     private void initEvent() {
@@ -79,7 +111,62 @@ public class ExecFileViewContainer implements ViewContainer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = ta_showContent.getText();
-                System.out.println(text);
+                addRecord();
+                commandExecutor.executeAsyncString(text, new RuntimeExecListener() {
+                    @Override
+                    public void onSuccess(String str) {
+                        logCallback.showLog(str, true);
+                    }
+
+                    @Override
+                    public void onFailure(String str) {
+                        logCallback.showLog(str, true);
+                    }
+                });
+            }
+        });
+        comb_frequency.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                RecordEntity recordEntity = (RecordEntity) e.getItem();
+                showFileDetail(new File(recordEntity.getSrc()));
+            }
+        });
+        pane_showSelect.setTransferHandler(new TransferHandler() {
+            @Override
+            public boolean importData(JComponent comp, Transferable t) {
+                try {
+                    Object o = t.getTransferData(DataFlavor.javaFileListFlavor);
+
+                    String filepath = o.toString();
+                    if (filepath.startsWith("[")) {
+                        filepath = filepath.substring(1);
+                    }
+                    if (filepath.endsWith("]")) {
+                        filepath = filepath.substring(0, filepath.length() - 1);
+                    }
+                    File selectFile = new File(filepath);
+                    if (!selectFile.exists()) {
+                        return false;
+                    }
+                    comb_frequency.setSelectedIndex(-1);
+                    showFileDetail(selectFile);
+                    return true;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+                for (int i = 0; i < transferFlavors.length; i++) {
+                    if (DataFlavor.javaFileListFlavor.equals(transferFlavors[i])) {
+                        return true;
+                    }
+                }
+                return false;
             }
         });
     }
@@ -88,7 +175,7 @@ public class ExecFileViewContainer implements ViewContainer {
         List<String> contents = FileUtil.readLineContent(file.getAbsolutePath());
         ta_showContent.setText("");
         for (String content : contents) {
-            ta_showContent.append(content + "\n");
+            ta_showContent.append(content + FileUtil.getLineSep());
         }
     }
 
