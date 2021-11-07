@@ -47,8 +47,7 @@ public class RecordEntity {
         for (FileEntity s : that.getSubFiles()) {
             sb2.append(s);
         }
-        return Objects.equals(src, that.src) &&
-                Objects.equals(dst, that.dst) && Objects.equals(sb1.toString(), sb2.toString());
+        return Objects.equals(src, that.src) && Objects.equals(sb1.toString(), sb2.toString());
     }
 
     @Override
@@ -57,11 +56,11 @@ public class RecordEntity {
         for (FileEntity s : subFiles) {
             sb.append(s);
         }
-        return Objects.hash(src, dst, sb.toString());
+        return Objects.hash(src, sb.toString());
     }
 
     @Override
     public String toString() {
-        return src + ";" + dst;
+        return src;
     }
 }

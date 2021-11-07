@@ -8,6 +8,7 @@ import view.BaseFileView;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransFileViewContainer extends BaseFileView {
@@ -21,6 +22,9 @@ public class TransFileViewContainer extends BaseFileView {
     private JPanel panel_baseFile;
     private ExecWorker worker;
 
+    private List<String> dstPathHistory;
+    private int dstPathHistoryIdx;
+
     public TransFileViewContainer(LogCallback logCallback) {
         super(logCallback);
         initView();
@@ -32,10 +36,15 @@ public class TransFileViewContainer extends BaseFileView {
         worker = ExecWorker.getInstance();
         worker.startWorker();
         commandExecutor.setWorker(worker);
+        dstPathHistory = new ArrayList<>();
     }
 
     private void pushFile() {
         String dstPath = jtf_dstPath.getText();
+        if (dstPathHistory.indexOf(dstPath) == -1) {
+            dstPathHistory.add(dstPath);
+            dstPathHistoryIdx = dstPathHistory.size() - 1;
+        }
         if (dstPath.isEmpty() || dstPath.equals(TIPS_DST_PATH)) {
             logCallback.showLog("dst path is empty......", true);
             return;
@@ -46,7 +55,7 @@ public class TransFileViewContainer extends BaseFileView {
             logCallback.showLog("please select file......", true);
             return;
         }
-        addRecord(dstPath);
+        addRecord();
 
         commandExecutor.sendFile(srcPaths, dstPath, cb_reboot.isSelected(), new RuntimeExecListener() {
             @Override
@@ -91,6 +100,34 @@ public class TransFileViewContainer extends BaseFileView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pushFile();
+            }
+        });
+        // 监听方向按键
+        jtf_dstPath.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_UP: // key up
+                        dstPathHistoryIdx = Math.max(0, --dstPathHistoryIdx);
+                        jtf_dstPath.setText(dstPathHistory.get(dstPathHistoryIdx));
+                        break;
+                    case KeyEvent.VK_DOWN: // key down
+                        dstPathHistoryIdx = Math.min(dstPathHistory.size() - 1, ++dstPathHistoryIdx);
+                        jtf_dstPath.setText(dstPathHistory.get(dstPathHistoryIdx));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
             }
         });
     }

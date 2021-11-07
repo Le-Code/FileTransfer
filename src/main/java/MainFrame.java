@@ -4,7 +4,6 @@ import dao.ExecWorker;
 import entity.ConfigInfo;
 import listener.LogCallback;
 import listener.RuntimeExecListener;
-import utils.CommandHelp;
 import utils.FileUtil;
 import view.impl.ExecFileViewContainer;
 import view.impl.InstallHapViewContainer;
@@ -14,14 +13,15 @@ import view.ViewContainer;
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MainFrame implements LogCallback {
     private ExecWorker worker;
     private CommandExecutor commandExecutor;
+    private List<String> commandHistory;
+    private int commandHistoryIdx;
 
     private String generateLogStr(String str) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh::mm::ss");
@@ -30,9 +30,13 @@ public class MainFrame implements LogCallback {
     }
 
     private void execCommand(String command) {
+        if (commandHistory.indexOf(command) == -1) {
+            commandHistory.add(command);
+            commandHistoryIdx = commandHistory.size() - 1;
+        }
         ta_showLog.append(generateLogStr(command));
         tf_command.setText("");
-        CommandHelp.Exec(command, new RuntimeExecListener() {
+        commandExecutor.executeAsyncString(command, new RuntimeExecListener() {
             @Override
             public void onSuccess(String str) {
                 ta_showLog.append(generateLogStr(str));
@@ -57,6 +61,7 @@ public class MainFrame implements LogCallback {
         commandExecutor = CommandExecutorFactory.chooseExecMode(CommandExecutorFactory.Mode.ADB);
         commandExecutor.setWorker(worker);
         ConfigInfo.getInstance();
+        commandHistory = new ArrayList<>();
     }
 
     private void initEvent() {
@@ -99,21 +104,36 @@ public class MainFrame implements LogCallback {
                 return false;
             }
         });
-        tf_command.addActionListener(new ActionListener() {
+        // 监听方向按键
+        tf_command.addKeyListener(new KeyListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String command = tf_command.getText().trim();
-                commandExecutor.executeAsyncString(command, new RuntimeExecListener() {
-                    @Override
-                    public void onSuccess(String str) {
-                        ta_showLog.append(generateLogStr(str));
-                    }
+            public void keyTyped(KeyEvent e) {
 
-                    @Override
-                    public void onFailure(String str) {
-                        ta_showLog.append(generateLogStr(str));
-                    }
-                });
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_UP: // key up
+                        commandHistoryIdx = Math.max(0, --commandHistoryIdx);
+                        tf_command.setText(commandHistory.get(commandHistoryIdx));
+                        break;
+                    case KeyEvent.VK_DOWN: // key down
+                        commandHistoryIdx = Math.min(commandHistory.size() - 1, ++commandHistoryIdx);
+                        tf_command.setText(commandHistory.get(commandHistoryIdx));
+                        break;
+                    case KeyEvent.VK_ENTER: // key enter
+                        String command = tf_command.getText().trim();
+                        execCommand(command);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
             }
         });
     }

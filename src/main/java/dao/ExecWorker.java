@@ -93,15 +93,18 @@ public class ExecWorker {
                         emptyCondition.await();
                     }
                     Runnable event = events.poll();
+                    fullCondition.signal();
+                    lock.unlock();
                     if (event != null) {
                         event.run();
                         System.out.println("do thing " + (++count));
                     }
-                    fullCondition.signal();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    lock.unlock();
+                    if (lock.tryLock()) {
+                        lock.unlock();
+                    }
                 }
             }
         }

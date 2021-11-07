@@ -69,7 +69,6 @@ public class ExecFileViewContainer implements ViewContainer {
     private void addRecord() {
         RecordEntity recordEntity = new RecordEntity();
         recordEntity.setSrc(selectPath);
-
         recordEntity.setSelected(files);
         if (records.add(recordEntity)) {
             comb_frequency.addItem(recordEntity);
@@ -199,6 +198,5 @@ public class ExecFileViewContainer implements ViewContainer {
     }
 
     private void initView() {
-        comb_frequency.setPrototypeDisplayValue("xxxxxxxx");
     }
 }

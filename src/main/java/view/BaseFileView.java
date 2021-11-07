@@ -216,14 +216,11 @@ public class BaseFileView implements ViewContainer {
     }
 
     private void initView() {
-        comb_frequency.setPrototypeDisplayValue("xxxxxxxx");
     }
 
-    protected void addRecord(String dstPath) {
+    protected void addRecord() {
         RecordEntity recordEntity = new RecordEntity();
         recordEntity.setSrc(selectPath);
-        recordEntity.setDst(dstPath);
-
         recordEntity.setSelected(files);
         if (records.add(recordEntity)) {
             comb_frequency.addItem(recordEntity);

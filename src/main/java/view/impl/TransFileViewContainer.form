@@ -32,7 +32,7 @@
               <component id="ea9e8" class="javax.swing.JTextField" binding="jtf_dstPath">
                 <constraints/>
                 <properties>
-                  <columns value="20"/>
+                  <columns value="40"/>
                   <foreground color="-3355444"/>
                   <text value="input dst path"/>
                   <verifyInputWhenFocusTarget value="true"/>

@@ -1,15 +1,11 @@
 package dao;
 
 import entity.ConfigInfo;
-import entity.WorkerEvent;
 import listener.RuntimeExecListener;
-import utils.CommandHelp;
+import utils.CloseUtil;
 import utils.FileUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,23 +17,40 @@ public abstract class CommandExecutor {
         this.worker = worker;
     }
 
+    private void callOnSuccess(RuntimeExecListener listener, String txt) {
+        if (listener != null) {
+            listener.onSuccess(txt);
+        }
+    }
+
+    private void callOnFailure(RuntimeExecListener listener, String txt) {
+        if (listener != null) {
+            listener.onFailure(txt);
+        }
+    }
+
     public void executeSyncString(String command, RuntimeExecListener listener) {
+        Process process = null;
+//        BufferedReader br = null;
+        BufferedInputStream bis = null;
         try {
-            Runtime runtime = Runtime.getRuntime();
-            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec(command).getInputStream()));
-            StringBuffer sb = new StringBuffer();
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
+            callOnSuccess(listener, "start exec: " + command);
+            process = Runtime.getRuntime().exec(command);
+            bis = new BufferedInputStream(process.getInputStream());
+            process.getOutputStream().flush();
+            byte[] buffer = new byte[1024];
+            int len = -1;
+            while ((len = bis.read(buffer, 0, 1024)) != -1) {
+                String line = new String(buffer);
+                callOnSuccess(listener, line);
             }
-            if (listener != null) {
-                listener.onSuccess(sb.toString());
-            }
+            callOnSuccess(listener, "over exec: " + command);
         } catch (IOException e) {
             e.printStackTrace();
-            if (listener != null) {
-                listener.onFailure(e.getMessage());
-            }
+            callOnFailure(listener, e.getMessage());
+        } finally {
+            CloseUtil.close(bis);
+            CloseUtil.close(process.getOutputStream());
         }
     }
 

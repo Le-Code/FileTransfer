@@ -21,7 +21,7 @@ public class AdbCommandExecutor extends CommandExecutor {
                     }
                 }
                 for (String hapPath : execPaths) {
-                    String command = "adb shell install " + hapPath;
+                    String command = "adb install " + hapPath;
                     executeSyncString(command, listener);
                 }
             }
