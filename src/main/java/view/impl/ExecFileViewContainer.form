@@ -74,7 +74,10 @@
             <children>
               <component id="fbb4b" class="javax.swing.JTextArea" binding="ta_showContent">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <editable value="false"/>
+                  <font size="16"/>
+                </properties>
               </component>
             </children>
           </scrollpane>

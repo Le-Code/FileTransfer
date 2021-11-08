@@ -31,7 +31,6 @@ public abstract class CommandExecutor {
 
     public void executeSyncString(String command, RuntimeExecListener listener) {
         Process process = null;
-//        BufferedReader br = null;
         BufferedInputStream bis = null;
         try {
             callOnSuccess(listener, "start exec: " + command);
@@ -41,7 +40,7 @@ public abstract class CommandExecutor {
             byte[] buffer = new byte[1024];
             int len = -1;
             while ((len = bis.read(buffer, 0, 1024)) != -1) {
-                String line = new String(buffer);
+                String line = new String(buffer, "gbk");
                 callOnSuccess(listener, line);
             }
             callOnSuccess(listener, "over exec: " + command);
@@ -54,20 +53,19 @@ public abstract class CommandExecutor {
         }
     }
 
-    public void executeSyncCommands(List<String> commands, RuntimeExecListener listener) {
-        StringBuffer sb = new StringBuffer();
-        for (String command : commands) {
-            sb.append(command + FileUtil.getLineSep());
-        }
-        executeSyncString(sb.toString(), listener);
-    }
-
     public void executeAsyncCommands(List<String> commands, RuntimeExecListener listener) {
-        StringBuffer sb = new StringBuffer();
-        for (String command : commands) {
-            sb.append(command + FileUtil.getLineSep());
+        if (commands.isEmpty()) {
+            listener.onFailure("application error");
+            return;
         }
-        executeAsyncString(sb.toString(), listener);
+        worker.pushWork(new Runnable() {
+            @Override
+            public void run() {
+                for (String command : commands) {
+                    executeSyncString(command, listener);
+                }
+            }
+        });
     }
 
     public void executeAsyncString(String command, RuntimeExecListener listener) {
@@ -108,6 +106,40 @@ public abstract class CommandExecutor {
             executeSyncString(command, listener);
         }
         return signedPaths;
+    }
+
+    public void executeFile(File file, RuntimeExecListener listener) {
+        if (!file.exists()) {
+            listener.onFailure("file not exist");
+            return;
+        }
+        worker.pushWork(new Runnable() {
+            @Override
+            public void run() {
+                Process process = null;
+                BufferedInputStream bis = null;
+                try {
+                    String fileName = file.getAbsolutePath();
+                    callOnSuccess(listener, "start exec file " + fileName);
+                    process = Runtime.getRuntime().exec(fileName);
+                    bis = new BufferedInputStream(process.getInputStream());
+                    process.getOutputStream().flush();
+                    byte[] buffer = new byte[1024];
+                    int len = -1;
+                    while ((len = bis.read(buffer, 0, 1024)) != -1) {
+                        String line = new String(buffer, "gbk");
+                        callOnSuccess(listener, line);
+                    }
+                    callOnSuccess(listener, "over exec file " + fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    callOnFailure(listener, e.getMessage());
+                } finally {
+                    CloseUtil.close(bis);
+                    CloseUtil.close(process.getOutputStream());
+                }
+            }
+        });
     }
 
     public abstract void installHap(List<String> hapPaths, String dstPath, boolean sign, RuntimeExecListener listener);

@@ -109,9 +109,9 @@ public class ExecFileViewContainer implements ViewContainer {
         btn_exec.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String text = ta_showContent.getText();
                 addRecord();
-                commandExecutor.executeAsyncString(text, new RuntimeExecListener() {
+                File file = preSelectEntity.getFile();
+                commandExecutor.executeFile(file, new RuntimeExecListener() {
                     @Override
                     public void onSuccess(String str) {
                         logCallback.showLog(str, true);
@@ -128,7 +128,7 @@ public class ExecFileViewContainer implements ViewContainer {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 RecordEntity recordEntity = (RecordEntity) e.getItem();
-                showFileDetail(new File(recordEntity.getSrc()));
+                showDetailRecord(recordEntity);
             }
         });
         pane_showSelect.setTransferHandler(new TransferHandler() {
@@ -176,6 +176,15 @@ public class ExecFileViewContainer implements ViewContainer {
         for (String content : contents) {
             ta_showContent.append(content + FileUtil.getLineSep());
         }
+    }
+
+    private void showDetailRecord(RecordEntity record) {
+        selectPath = record.getSrc();
+        files = new ArrayList<>(record.getSubFiles());
+        FileListMode<FileEntity> fileListMode = new FileListMode<>(files);
+        fileList.setModel(fileListMode);
+        fileList.setCellRenderer(new FileCellRender());
+        label_selectPath.setText("select path: " + selectPath);
     }
 
     private void showFileDetail(File selectFile) {
