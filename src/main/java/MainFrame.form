@@ -7,56 +7,74 @@
     <properties/>
     <border type="none"/>
     <children>
-      <tabbedpane id="ebb9" binding="contentTabbedPane">
+      <splitpane id="e607b" binding="jsp_main">
         <constraints border-constraint="Center"/>
         <properties>
-          <font style="0"/>
-          <foreground color="-16515070"/>
-          <tabPlacement value="1"/>
+          <dividerLocation value="230"/>
+          <dividerSize value="10"/>
+          <orientation value="0"/>
         </properties>
         <border type="none"/>
-        <children/>
-      </tabbedpane>
-      <grid id="7edf8" layout-manager="BorderLayout" hgap="0" vgap="0">
-        <constraints border-constraint="South"/>
-        <properties/>
-        <border type="none"/>
         <children>
-          <scrollpane id="c4f4b">
-            <constraints border-constraint="Center"/>
+          <grid id="fba4e" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <splitpane position="right"/>
+            </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="b0325" class="javax.swing.JTextArea" binding="ta_showLog">
-                <constraints/>
-                <properties>
-                  <editable value="false"/>
-                  <rows value="10"/>
-                </properties>
-              </component>
-            </children>
-          </scrollpane>
-          <grid id="86be2" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints border-constraint="South"/>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="b3724" class="javax.swing.JTextField" binding="tf_command">
+              <scrollpane id="ffc88">
                 <constraints border-constraint="Center"/>
-                <properties>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="a3254" class="javax.swing.JButton" binding="btn_exec">
-                <constraints border-constraint="East"/>
-                <properties>
-                  <text value="exec"/>
-                </properties>
-              </component>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="a7afc" class="javax.swing.JTextPane" binding="ta_showLog">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="21ef0" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints border-constraint="South"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="c0958" class="javax.swing.JTextField" binding="tf_command">
+                    <constraints border-constraint="Center"/>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="3b18" class="javax.swing.JButton" binding="btn_exec">
+                    <constraints border-constraint="East"/>
+                    <properties>
+                      <text value="exec"/>
+                    </properties>
+                  </component>
+                  <component id="f6a66" class="javax.swing.JButton" binding="btn_clearLog">
+                    <constraints border-constraint="West"/>
+                    <properties>
+                      <text value="clear"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
             </children>
           </grid>
+          <tabbedpane id="feea4" binding="contentTabbedPane">
+            <constraints>
+              <splitpane position="left"/>
+            </constraints>
+            <properties>
+              <font style="0"/>
+              <foreground color="-16515070"/>
+              <tabPlacement value="1"/>
+            </properties>
+            <border type="none"/>
+            <children/>
+          </tabbedpane>
         </children>
-      </grid>
+      </splitpane>
     </children>
   </grid>
   <buttonGroups>

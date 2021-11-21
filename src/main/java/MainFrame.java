@@ -11,11 +11,17 @@ import view.impl.TransFileViewContainer;
 import view.ViewContainer;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class MainFrame implements LogCallback {
     private ExecWorker worker;
@@ -29,22 +35,33 @@ public class MainFrame implements LogCallback {
         return logStr;
     }
 
+    private void logAppend(String txt, Color color) {
+        SimpleAttributeSet set = new SimpleAttributeSet();
+        StyleConstants.setForeground(set, color);
+        Document doc = ta_showLog.getStyledDocument();
+        try {
+            doc.insertString(doc.getLength(), txt, set);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void execCommand(String command) {
         if (commandHistory.indexOf(command) == -1) {
             commandHistory.add(command);
             commandHistoryIdx = commandHistory.size() - 1;
         }
-        ta_showLog.append(generateLogStr(command));
+        logAppend(generateLogStr(command), Color.BLACK);
         tf_command.setText("");
         commandExecutor.executeAsyncString(command, new RuntimeExecListener() {
             @Override
             public void onSuccess(String str) {
-                ta_showLog.append(generateLogStr(str));
+                logAppend(generateLogStr(str), Color.BLACK);
             }
 
             @Override
             public void onFailure(String str) {
-                ta_showLog.append("exec command \"" + command + "\" error");
+                logAppend(generateLogStr(str), Color.RED);
             }
         });
     }
@@ -69,6 +86,9 @@ public class MainFrame implements LogCallback {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String command = tf_command.getText().trim();
+                if (command.isEmpty()) {
+                    showFailureLog("please select available file......", true);
+                }
                 execCommand(command);
             }
         });
@@ -136,6 +156,13 @@ public class MainFrame implements LogCallback {
 
             }
         });
+
+        btn_clearLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ta_showLog.setText("");
+            }
+        });
     }
 
     private void initView() {
@@ -172,15 +199,26 @@ public class MainFrame implements LogCallback {
     }
 
     private JPanel mainContainer;
-    private JTextArea ta_showLog;
+    private JTextPane ta_showLog;
     private JTextField tf_command;
     private JTabbedPane contentTabbedPane;
     private JButton btn_exec;
+    private JSplitPane jsp_main;
+    private JButton btn_clearLog;
 
     @Override
-    public void showLog(String msg, boolean append) {
+    public void showSuccessLog(String msg, boolean append) {
         if (append) {
-            ta_showLog.append(generateLogStr(msg));
+            logAppend(generateLogStr(msg), Color.BLACK);
+        } else {
+            ta_showLog.setText(msg);
+        }
+    }
+
+    @Override
+    public void showFailureLog(String msg, boolean append) {
+        if (append) {
+            logAppend(generateLogStr(msg), Color.RED);
         } else {
             ta_showLog.setText(msg);
         }

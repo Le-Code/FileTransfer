@@ -1,5 +1,6 @@
 package listener;
 
 public interface LogCallback {
-    void showLog(String msg, boolean append);
+    void showSuccessLog(String msg, boolean append);
+    void showFailureLog(String msg, boolean append);
 }

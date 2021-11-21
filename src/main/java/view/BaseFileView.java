@@ -186,19 +186,19 @@ public class BaseFileView implements ViewContainer {
             public void actionPerformed(ActionEvent e) {
                 ConfigInfo configInfo = ConfigInfo.getInstance();
                 if (!configInfo.checkInitExecInfo()) {
-                    logCallback.showLog("check initExecEnv failure", true);
+                    logCallback.showFailureLog("check initExecEnv failure", true);
                 }
                 List<String> commands = cb_hdcMode.isSelected() ?
                         configInfo.getHdcInitExecInfo() : configInfo.getAdbInitExecInfo();
                 commandExecutor.executeAsyncCommands(commands, new RuntimeExecListener() {
                     @Override
                     public void onSuccess(String str) {
-                        logCallback.showLog(str, true);
+                        logCallback.showSuccessLog(str, true);
                     }
 
                     @Override
                     public void onFailure(String str) {
-                        logCallback.showLog(str, true);
+                        logCallback.showFailureLog(str, true);
                     }
                 });
             }
@@ -229,6 +229,9 @@ public class BaseFileView implements ViewContainer {
 
     protected List<String> getSrcPaths() {
         List<String> srcPaths = new ArrayList<>();
+        if (files == null) {
+            return srcPaths;
+        }
         for (FileEntity fileEntity : files) {
             if (!fileEntity.isSelected()) {
                 continue;

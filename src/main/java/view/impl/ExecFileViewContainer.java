@@ -109,17 +109,21 @@ public class ExecFileViewContainer implements ViewContainer {
         btn_exec.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (files == null) {
+                    logCallback.showFailureLog("please select available file......", true);
+                    return;
+                }
                 addRecord();
                 File file = preSelectEntity.getFile();
                 commandExecutor.executeFile(file, new RuntimeExecListener() {
                     @Override
                     public void onSuccess(String str) {
-                        logCallback.showLog(str, true);
+                        logCallback.showSuccessLog(str, true);
                     }
 
                     @Override
                     public void onFailure(String str) {
-                        logCallback.showLog(str, true);
+                        logCallback.showFailureLog(str, true);
                     }
                 });
             }

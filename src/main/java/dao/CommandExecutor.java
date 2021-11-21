@@ -31,16 +31,18 @@ public abstract class CommandExecutor {
 
     public void executeSyncString(String command, RuntimeExecListener listener) {
         Process process = null;
-        BufferedInputStream bis = null;
+        BufferedReader br = null;
+        if (command == null || command.isEmpty()) {
+            callOnFailure(listener, "command is empty");
+            return;
+        }
         try {
             callOnSuccess(listener, "start exec: " + command);
             process = Runtime.getRuntime().exec(command);
-            bis = new BufferedInputStream(process.getInputStream());
+            br = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
             process.getOutputStream().flush();
-            byte[] buffer = new byte[1024];
-            int len = -1;
-            while ((len = bis.read(buffer, 0, 1024)) != -1) {
-                String line = new String(buffer, "gbk");
+            String line = null;
+            while ((line = br.readLine()) != null) {
                 callOnSuccess(listener, line);
             }
             callOnSuccess(listener, "over exec: " + command);
@@ -48,8 +50,10 @@ public abstract class CommandExecutor {
             e.printStackTrace();
             callOnFailure(listener, e.getMessage());
         } finally {
-            CloseUtil.close(bis);
-            CloseUtil.close(process.getOutputStream());
+            CloseUtil.close(br);
+            if (process != null) {
+                CloseUtil.close(process.getOutputStream());
+            }
         }
     }
 
@@ -117,17 +121,15 @@ public abstract class CommandExecutor {
             @Override
             public void run() {
                 Process process = null;
-                BufferedInputStream bis = null;
+                BufferedReader br = null;
                 try {
                     String fileName = file.getAbsolutePath();
                     callOnSuccess(listener, "start exec file " + fileName);
                     process = Runtime.getRuntime().exec(fileName);
-                    bis = new BufferedInputStream(process.getInputStream());
+                    br = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     process.getOutputStream().flush();
-                    byte[] buffer = new byte[1024];
-                    int len = -1;
-                    while ((len = bis.read(buffer, 0, 1024)) != -1) {
-                        String line = new String(buffer, "gbk");
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
                         callOnSuccess(listener, line);
                     }
                     callOnSuccess(listener, "over exec file " + fileName);
@@ -135,8 +137,10 @@ public abstract class CommandExecutor {
                     e.printStackTrace();
                     callOnFailure(listener, e.getMessage());
                 } finally {
-                    CloseUtil.close(bis);
-                    CloseUtil.close(process.getOutputStream());
+                    CloseUtil.close(br);
+                    if (process != null) {
+                        CloseUtil.close(process.getOutputStream());
+                    }
                 }
             }
         });

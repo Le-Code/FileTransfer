@@ -46,13 +46,13 @@ public class TransFileViewContainer extends BaseFileView {
             dstPathHistoryIdx = dstPathHistory.size() - 1;
         }
         if (dstPath.isEmpty() || dstPath.equals(TIPS_DST_PATH)) {
-            logCallback.showLog("dst path is empty......", true);
+            logCallback.showFailureLog("dst path is empty......", true);
             return;
         }
 
         List<String> srcPaths = getSrcPaths();
         if (srcPaths.isEmpty()) {
-            logCallback.showLog("please select file......", true);
+            logCallback.showFailureLog("please select file......", true);
             return;
         }
         addRecord();
@@ -60,12 +60,12 @@ public class TransFileViewContainer extends BaseFileView {
         commandExecutor.sendFile(srcPaths, dstPath, cb_reboot.isSelected(), new RuntimeExecListener() {
             @Override
             public void onSuccess(String str) {
-                logCallback.showLog(str, true);
+                logCallback.showSuccessLog(str, true);
             }
 
             @Override
             public void onFailure(String str) {
-                logCallback.showLog(str, true);
+                logCallback.showFailureLog(str, true);
             }
         });
 

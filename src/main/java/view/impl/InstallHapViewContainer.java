@@ -34,19 +34,19 @@ public class InstallHapViewContainer extends BaseFileView {
     private void installHap() {
         List<String> srcPaths = getSrcPaths();
         if (srcPaths.isEmpty()) {
-            logCallback.showLog("please select available file......", true);
+            logCallback.showFailureLog("please select available file......", true);
             return;
         }
         addRecord();
         commandExecutor.installHap(srcPaths, "", cb_sign.isSelected(), new RuntimeExecListener() {
             @Override
             public void onSuccess(String str) {
-                logCallback.showLog(str, true);
+                logCallback.showSuccessLog(str, true);
             }
 
             @Override
             public void onFailure(String str) {
-                logCallback.showLog(str, true);
+                logCallback.showFailureLog(str, true);
             }
         });
     }
