@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.SubView">
+  <grid id="27dc6" binding="mainFrame" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="8e8b8" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <scrollpane id="d0066">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="ed84" class="javax.swing.JTextPane" binding="ta_showLog">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+          <grid id="ea6f2" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="South"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="fbe4b" class="javax.swing.JTextField" binding="tf_command">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="24172" class="javax.swing.JButton" binding="btn_exec">
+                <constraints border-constraint="East"/>
+                <properties>
+                  <text value="exec"/>
+                </properties>
+              </component>
+              <component id="e4c54" class="javax.swing.JButton" binding="btn_clearLog">
+                <constraints border-constraint="West"/>
+                <properties>
+                  <text value="clear"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

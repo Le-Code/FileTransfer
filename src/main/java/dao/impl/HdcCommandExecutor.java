@@ -25,7 +25,7 @@ public class HdcCommandExecutor extends CommandExecutor {
                     }
                 }
                 for (String hapPath : execPaths) {
-                    String command = "hdc install -p " + hapPath;
+                    String command = "hdc install " + hapPath;
                     executeSyncString(command, listener);
                 }
             }
@@ -46,7 +46,7 @@ public class HdcCommandExecutor extends CommandExecutor {
                     executeSyncString(command, listener);
                 }
                 if (reboot) {
-                    executeSyncString("hdc reboot", null);
+                    executeSyncString("hdc shell reboot", null);
                 }
             }
         });

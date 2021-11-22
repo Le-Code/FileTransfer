@@ -16,8 +16,6 @@ public class InstallHapViewContainer extends BaseFileView {
     private JCheckBox cb_sign;
     private JPanel panel_baseFile;
 
-    private ExecWorker worker;
-
     public InstallHapViewContainer(LogCallback logCallback) {
         super(logCallback);
         initView();
@@ -26,7 +24,7 @@ public class InstallHapViewContainer extends BaseFileView {
     }
 
     private void initInstance() {
-        worker = ExecWorker.getInstance();
+        ExecWorker worker = ExecWorker.getInstance();
         worker.startWorker();
         commandExecutor.setWorker(worker);
     }

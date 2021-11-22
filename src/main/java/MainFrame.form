@@ -16,51 +16,6 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="fba4e" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints>
-              <splitpane position="right"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <scrollpane id="ffc88">
-                <constraints border-constraint="Center"/>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="a7afc" class="javax.swing.JTextPane" binding="ta_showLog">
-                    <constraints/>
-                    <properties/>
-                  </component>
-                </children>
-              </scrollpane>
-              <grid id="21ef0" layout-manager="BorderLayout" hgap="0" vgap="0">
-                <constraints border-constraint="South"/>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="c0958" class="javax.swing.JTextField" binding="tf_command">
-                    <constraints border-constraint="Center"/>
-                    <properties>
-                      <text value=""/>
-                    </properties>
-                  </component>
-                  <component id="3b18" class="javax.swing.JButton" binding="btn_exec">
-                    <constraints border-constraint="East"/>
-                    <properties>
-                      <text value="exec"/>
-                    </properties>
-                  </component>
-                  <component id="f6a66" class="javax.swing.JButton" binding="btn_clearLog">
-                    <constraints border-constraint="West"/>
-                    <properties>
-                      <text value="clear"/>
-                    </properties>
-                  </component>
-                </children>
-              </grid>
-            </children>
-          </grid>
           <tabbedpane id="feea4" binding="contentTabbedPane">
             <constraints>
               <splitpane position="left"/>
@@ -73,6 +28,14 @@
             <border type="none"/>
             <children/>
           </tabbedpane>
+          <grid id="79495" binding="panel_subView" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <splitpane position="right"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
         </children>
       </splitpane>
     </children>

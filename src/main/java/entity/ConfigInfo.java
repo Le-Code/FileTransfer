@@ -11,6 +11,9 @@ public class ConfigInfo {
 
     private SignInfo signInfo;
     private InitExecEnvInfo initExecEnvInfo;
+    private List<CustomCommandInfo> customCommandInfoList;
+
+    private JSONObject jsonObject;
 
     public static ConfigInfo getInstance() {
         if (instance == null) {
@@ -24,15 +27,33 @@ public class ConfigInfo {
     }
 
     private void initConfig() {
-        JSONObject jsonObject = JsonUtil.readJsonFile("signConfig.json");
+        jsonObject = JsonUtil.readJsonFile("signConfig.json");
         if (jsonObject == null) {
             return;
         }
-        initSignInfo(jsonObject);
-        initExecEnv(jsonObject);
+        initSignInfo();
+        initExecEnv();
+        initCustomCommand();
     }
 
-    private void initExecEnv(JSONObject jsonObject) {
+    private void initCustomCommand() {
+        JSONObject customCommand = jsonObject.getJSONObject("customCommand");
+        if (customCommand == null) {
+            return;
+        }
+        customCommandInfoList = new ArrayList<>();
+        JSONArray commands = customCommand.getJSONArray("commands");
+        if (commands != null) {
+            for (int idx = 0; idx < commands.size(); idx++) {
+                JSONObject commandInfo = commands.getJSONObject(idx);
+                String command_str = commandInfo.getString("command_str");
+                String command_name = commandInfo.getString("command_name");
+                customCommandInfoList.add(new CustomCommandInfo(command_str, command_name));
+            }
+        }
+    }
+
+    private void initExecEnv() {
         JSONObject initExecEnvObj = jsonObject.getJSONObject("initExecEnv");
         if (initExecEnvObj == null) {
             return;
@@ -55,7 +76,7 @@ public class ConfigInfo {
         }
     }
 
-    private void initSignInfo(JSONObject jsonObject) {
+    private void initSignInfo() {
         JSONObject signObj = jsonObject.getJSONObject("sign");
         if (signObj == null) {
             return;
@@ -88,6 +109,31 @@ public class ConfigInfo {
 
     public List<String> getHdcInitExecInfo() {
         return initExecEnvInfo != null ? initExecEnvInfo.getHdcInitEnvCommands() : null;
+    }
+
+    public List<CustomCommandInfo> getCustomCommandInfoList() {
+        return this.customCommandInfoList;
+    }
+
+    public void freshCustomCommands() {
+        if (jsonObject == null || customCommandInfoList == null) {
+            return;
+        }
+        jsonObject = JsonUtil.readJsonFile("signConfig.json");
+        JSONObject customCommand = jsonObject.getJSONObject("customCommand");
+        if (customCommand == null) {
+            return;
+        }
+        customCommandInfoList.clear();
+        JSONArray commands = customCommand.getJSONArray("commands");
+        if (commands != null) {
+            for (int idx = 0; idx < commands.size(); idx++) {
+                JSONObject commandInfo = commands.getJSONObject(idx);
+                String command_str = commandInfo.getString("command_str");
+                String command_name = commandInfo.getString("command_name");
+                customCommandInfoList.add(new CustomCommandInfo(command_str, command_name));
+            }
+        }
     }
 
     public boolean checkInitExecInfo() {
@@ -157,6 +203,32 @@ public class ConfigInfo {
 
         public List<String> getHdcInitEnvCommands() {
             return hdcInitEnvCommands;
+        }
+    }
+
+    public class CustomCommandInfo {
+        private String commandStr;
+        private String commandName;
+
+        public CustomCommandInfo(String commandStr, String commandName) {
+            this.commandStr = commandStr;
+            this.commandName = commandName;
+        }
+
+        public String getCommandStr() {
+            return commandStr;
+        }
+
+        public void setCommandStr(String commandStr) {
+            this.commandStr = commandStr;
+        }
+
+        public String getCommandName() {
+            return commandName;
+        }
+
+        public void setCommandName(String commandName) {
+            this.commandName = commandName;
         }
     }
 }

@@ -12,5 +12,21 @@
     "hdc": [
       "hdc start -r"
     ]
+  },
+  "customCommand": {
+    "commands": [
+      {
+        "command_str": "adb reboot",
+        "command_name": "adb reboot"
+      },
+      {
+        "command_str": "hdc reboot",
+        "command_name": "hdc reboot"
+      },
+      {
+        "command_str": "hdc reboot",
+        "command_name": "hdc reboot"
+      }
+    ]
   }
 }

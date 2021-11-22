@@ -42,9 +42,8 @@ public class ExecFileViewContainer implements ViewContainer {
     private String selectPath;
     private Set<RecordEntity> records;
     private FileEntity preSelectEntity;
-    private ExecWorker worker;
 
-    protected CommandExecutor commandExecutor;
+    private CommandExecutor commandExecutor;
 
     @Override
     public JPanel getView() {
@@ -60,7 +59,7 @@ public class ExecFileViewContainer implements ViewContainer {
 
     private void initInstance() {
         records = new HashSet<>();
-        worker = ExecWorker.getInstance();
+        ExecWorker worker = ExecWorker.getInstance();
         worker.startWorker();
         commandExecutor = CommandExecutorFactory.chooseExecMode(CommandExecutorFactory.Mode.HDC);
         commandExecutor.setWorker(worker);

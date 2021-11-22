@@ -20,7 +20,6 @@ public class TransFileViewContainer extends BaseFileView {
     private JCheckBox cb_reboot;
     private JTextField jtf_dstPath;
     private JPanel panel_baseFile;
-    private ExecWorker worker;
 
     private List<String> dstPathHistory;
     private int dstPathHistoryIdx;
@@ -33,7 +32,7 @@ public class TransFileViewContainer extends BaseFileView {
     }
 
     private void initInstance() {
-        worker = ExecWorker.getInstance();
+        ExecWorker worker = ExecWorker.getInstance();
         worker.startWorker();
         commandExecutor.setWorker(worker);
         dstPathHistory = new ArrayList<>();
