@@ -20,12 +20,8 @@
         "command_name": "adb reboot"
       },
       {
-        "command_str": "hdc reboot",
-        "command_name": "hdc reboot"
-      },
-      {
-        "command_str": "hdc reboot",
-        "command_name": "hdc reboot"
+        "command_str": "adb reboot",
+        "command_name": "adb reboot"
       }
     ]
   }

@@ -174,7 +174,7 @@ public class BaseFileView implements ViewContainer {
         cb_hdcMode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (cb_selectAllFiles.isSelected()) {
+                if (cb_hdcMode.isSelected()) {
                     commandExecutor = CommandExecutorFactory.chooseExecMode(CommandExecutorFactory.Mode.HDC);
                 } else {
                     commandExecutor = CommandExecutorFactory.chooseExecMode(CommandExecutorFactory.Mode.ADB);

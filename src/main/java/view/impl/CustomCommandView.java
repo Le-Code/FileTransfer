@@ -35,8 +35,8 @@ public class CustomCommandView implements ViewContainer {
             public void actionPerformed(ActionEvent e) {
                 configInfo.freshCustomCommands();
                 panel_btn.removeAll();
-                panel_btn.repaint();
                 initCustomCommand();
+                panel_btn.updateUI();
             }
         });
     }

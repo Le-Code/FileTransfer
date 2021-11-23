@@ -27,7 +27,7 @@ public class ConfigInfo {
     }
 
     private void initConfig() {
-        jsonObject = JsonUtil.readJsonFile("signConfig.json");
+        jsonObject = JsonUtil.readJsonFile("config.json");
         if (jsonObject == null) {
             return;
         }
@@ -119,7 +119,7 @@ public class ConfigInfo {
         if (jsonObject == null || customCommandInfoList == null) {
             return;
         }
-        jsonObject = JsonUtil.readJsonFile("signConfig.json");
+        jsonObject = JsonUtil.readJsonFile("config.json");
         JSONObject customCommand = jsonObject.getJSONObject("customCommand");
         if (customCommand == null) {
             return;

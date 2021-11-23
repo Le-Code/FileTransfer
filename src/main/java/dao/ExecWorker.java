@@ -1,7 +1,8 @@
 package dao;
 
-import entity.WorkerEvent;
+import entity.InputStreamEvent;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ExecWorker {
     private Condition fullCondition;
     private ExecutorService produceThreadPool;
     private ExecutorService consumerThreadPool;
+    private ExecutorService inputStreamResolveThreadPool;
     private List<Consumer> consumers;
 
     private ExecWorker() {
@@ -44,6 +46,7 @@ public class ExecWorker {
     private void init() {
         consumerThreadPool = Executors.newFixedThreadPool(4);
         produceThreadPool = Executors.newFixedThreadPool(4);
+        inputStreamResolveThreadPool = Executors.newFixedThreadPool(4);
         consumers = new ArrayList<>();
     }
 
@@ -51,6 +54,10 @@ public class ExecWorker {
         Consumer consumer = new Consumer();
         consumerThreadPool.execute(consumer);
         consumers.add(consumer);
+    }
+
+    public void pushInputStreamEvent(InputStreamEvent event) {
+        inputStreamResolveThreadPool.execute(event);
     }
 
     public void pushWork(Runnable r) {

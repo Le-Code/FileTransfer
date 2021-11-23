@@ -3,7 +3,6 @@ package view;
 import dao.CommandExecutor;
 import dao.CommandExecutorFactory;
 import dao.ExecWorker;
-import entity.ConfigInfo;
 import listener.LogCallback;
 import listener.RuntimeExecListener;
 import utils.FileUtil;
@@ -136,6 +135,7 @@ public class SubView implements ViewContainer{
         });
         // 监听方向按键
         tf_command.addKeyListener(new KeyListener() {
+            private boolean ctrlPressed = false;
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -156,6 +156,9 @@ public class SubView implements ViewContainer{
                         String command = tf_command.getText().trim();
                         execCommand(command);
                         break;
+                    case KeyEvent.VK_CONTROL:
+                        ctrlPressed = true;
+                        break;
                     default:
                         break;
                 }
@@ -163,7 +166,16 @@ public class SubView implements ViewContainer{
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_C:
+                        if (ctrlPressed) {
+                            terminateCommand();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                ctrlPressed = false;
             }
         });
 
@@ -171,6 +183,20 @@ public class SubView implements ViewContainer{
             @Override
             public void actionPerformed(ActionEvent e) {
                 ta_showLog.setText("");
+            }
+        });
+    }
+
+    private void terminateCommand() {
+        commandExecutor.terminateCommand(new RuntimeExecListener() {
+            @Override
+            public void onSuccess(String str) {
+                logAppend(generateLogStr(str), Color.BLACK);
+            }
+
+            @Override
+            public void onFailure(String str) {
+                logAppend(generateLogStr(str), Color.RED);
             }
         });
     }

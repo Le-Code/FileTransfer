@@ -1,6 +1,7 @@
 package dao;
 
 import entity.ConfigInfo;
+import entity.InputStreamEvent;
 import listener.RuntimeExecListener;
 import utils.CloseUtil;
 import utils.FileUtil;
@@ -15,6 +16,16 @@ public abstract class CommandExecutor {
 
     public void setWorker(ExecWorker worker) {
         this.worker = worker;
+    }
+
+    public void terminateCommand(RuntimeExecListener listener) {
+        try {
+            String[] command = {"cmd", "ctrl", "c"};
+            Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+            listener.onFailure(e.getMessage());
+        }
     }
 
     private void callOnSuccess(RuntimeExecListener listener, String txt) {
@@ -39,6 +50,11 @@ public abstract class CommandExecutor {
         try {
             callOnSuccess(listener, "start exec: " + command);
             process = Runtime.getRuntime().exec(command);
+
+            // handle ErrorStream
+            worker.pushInputStreamEvent(
+                    new InputStreamEvent(process.getErrorStream(), "ErrorStream", listener));
+
             br = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
             process.getOutputStream().flush();
             String line = null;
@@ -120,27 +136,13 @@ public abstract class CommandExecutor {
         worker.pushWork(new Runnable() {
             @Override
             public void run() {
-                Process process = null;
-                BufferedReader br = null;
                 try {
                     String fileName = file.getAbsolutePath();
-                    callOnSuccess(listener, "start exec file " + fileName);
-                    process = Runtime.getRuntime().exec(fileName);
-                    br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    process.getOutputStream().flush();
-                    String line = null;
-                    while ((line = br.readLine()) != null) {
-                        callOnSuccess(listener, line);
-                    }
-                    callOnSuccess(listener, "over exec file " + fileName);
+                    String[] command = {"cmd.exe","/C", "Start", fileName};
+                    Runtime.getRuntime().exec(command);
                 } catch (IOException e) {
                     e.printStackTrace();
                     callOnFailure(listener, e.getMessage());
-                } finally {
-                    CloseUtil.close(br);
-                    if (process != null) {
-                        CloseUtil.close(process.getOutputStream());
-                    }
                 }
             }
         });
