@@ -224,6 +224,7 @@ public class BaseFileView implements ViewContainer {
         recordEntity.setSelected(files);
         if (records.add(recordEntity)) {
             comb_frequency.addItem(recordEntity);
+            comb_frequency.setSelectedIndex(comb_frequency.getItemCount() - 1);
         }
     }
 

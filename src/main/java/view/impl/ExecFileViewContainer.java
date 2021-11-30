@@ -71,6 +71,7 @@ public class ExecFileViewContainer implements ViewContainer {
         recordEntity.setSelected(files);
         if (records.add(recordEntity)) {
             comb_frequency.addItem(recordEntity);
+            comb_frequency.setSelectedIndex(comb_frequency.getItemCount() - 1);
         }
     }
 
@@ -199,7 +200,10 @@ public class ExecFileViewContainer implements ViewContainer {
             File[] listFiles = selectFile.listFiles();
             for (File f : listFiles) {
                 if (f.isFile()) {
-                    files.add(new FileEntity(f));
+                    String fileName = f.getName();
+                    if (fileName.endsWith(".bat")) {
+                        files.add(new FileEntity(f));
+                    }
                 }
             }
         }

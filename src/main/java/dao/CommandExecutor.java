@@ -73,6 +73,37 @@ public abstract class CommandExecutor {
         }
     }
 
+    private void executeSyncStringArr(String[] command, RuntimeExecListener listener) {
+        Process process = null;
+        BufferedReader br = null;
+        if (command == null) {
+            callOnFailure(listener, "command is empty");
+            return;
+        }
+        try {
+            process = Runtime.getRuntime().exec(command);
+
+            // handle ErrorStream
+            worker.pushInputStreamEvent(
+                    new InputStreamEvent(process.getErrorStream(), "ErrorStream", listener));
+
+            br = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
+            process.getOutputStream().flush();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                callOnSuccess(listener, line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            callOnFailure(listener, e.getMessage());
+        } finally {
+            CloseUtil.close(br);
+            if (process != null) {
+                CloseUtil.close(process.getOutputStream());
+            }
+        }
+    }
+
     public void executeAsyncCommands(List<String> commands, RuntimeExecListener listener) {
         if (commands.isEmpty()) {
             listener.onFailure("application error");
@@ -81,9 +112,13 @@ public abstract class CommandExecutor {
         worker.pushWork(new Runnable() {
             @Override
             public void run() {
-                for (String command : commands) {
-                    executeSyncString(command, listener);
+                String[] commandArr = new String[commands.size() + 2];
+                commandArr[0] = "cmd";
+                commandArr[1] = "/C";
+                for (int idx = 0; idx < commands.size(); idx++) {
+                    commandArr[idx + 2] = commands.get(idx);
                 }
+                executeSyncStringArr(commandArr, listener);
             }
         });
     }
@@ -137,8 +172,8 @@ public abstract class CommandExecutor {
             @Override
             public void run() {
                 try {
-                    String fileName = file.getAbsolutePath();
-                    String[] command = {"cmd.exe","/C", "Start", fileName};
+                    String filePath = file.getAbsolutePath();
+                    String[] command = {"cmd.exe","/C", "Start", filePath};
                     Runtime.getRuntime().exec(command);
                 } catch (IOException e) {
                     e.printStackTrace();
