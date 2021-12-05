@@ -7,7 +7,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <splitpane id="e607b" binding="jsp_main">
+      <splitpane id="e607b">
         <constraints border-constraint="Center"/>
         <properties>
           <dividerLocation value="230"/>

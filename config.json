@@ -13,6 +13,22 @@
       "hdc start -r"
     ]
   },
+  "sendFile": {
+    "adb": "adb push",
+    "hdc": "hdc file send"
+  },
+  "reboot": {
+    "adb": "adb reboot",
+    "hdc": "hdc shell reboot"
+  },
+  "install": {
+    "adb": "adb install",
+    "hdc": "hdc app install"
+  },
+  "log": {
+    "adb": "adb shell logcat",
+    "hdc": "hdc shell hilogcat"
+  },
   "customCommand": {
     "commands": [
       {

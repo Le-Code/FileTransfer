@@ -33,7 +33,7 @@ public class CustomCommandView implements ViewContainer {
         btn_fresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                configInfo.freshCustomCommands();
+                configInfo.freshConfigInfo();
                 panel_btn.removeAll();
                 initCustomCommand();
                 panel_btn.updateUI();

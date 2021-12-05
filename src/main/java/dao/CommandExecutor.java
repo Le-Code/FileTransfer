@@ -13,6 +13,12 @@ import java.util.List;
 public abstract class CommandExecutor {
 
     protected ExecWorker worker;
+    protected ConfigInfo configInfo;
+    protected Thread logThread;
+
+    public CommandExecutor() {
+        configInfo = ConfigInfo.getInstance();
+    }
 
     public void setWorker(ExecWorker worker) {
         this.worker = worker;
@@ -28,13 +34,13 @@ public abstract class CommandExecutor {
         }
     }
 
-    private void callOnSuccess(RuntimeExecListener listener, String txt) {
+    protected void callOnSuccess(RuntimeExecListener listener, String txt) {
         if (listener != null) {
             listener.onSuccess(txt);
         }
     }
 
-    private void callOnFailure(RuntimeExecListener listener, String txt) {
+    protected void callOnFailure(RuntimeExecListener listener, String txt) {
         if (listener != null) {
             listener.onFailure(txt);
         }
@@ -49,7 +55,8 @@ public abstract class CommandExecutor {
         }
         try {
             callOnSuccess(listener, "start exec: " + command);
-            process = Runtime.getRuntime().exec(command);
+            String[] commandArr = new String[] {"cmd", "/C", command};
+            process = Runtime.getRuntime().exec(commandArr);
 
             // handle ErrorStream
             worker.pushInputStreamEvent(
@@ -183,6 +190,54 @@ public abstract class CommandExecutor {
         });
     }
 
+    public void stopLog() {
+        if (logThread != null) {
+            logThread.interrupt();
+        }
+    }
+
     public abstract void installHap(List<String> hapPaths, String dstPath, boolean sign, RuntimeExecListener listener);
     public abstract void sendFile(List<String> srcPaths, String dstPath, boolean reboot, RuntimeExecListener listener);
+    public abstract void log(String filter, RuntimeExecListener listener);
+
+    protected class LogRunnable implements Runnable {
+        private String command;
+        private String filter;
+        private RuntimeExecListener listener;
+        public LogRunnable(String command, String filter, RuntimeExecListener listener) {
+            this.command = command;
+            this.filter = filter;
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            Process process = null;
+            BufferedReader br = null;
+            String[] filters = filter.split("\\s+");
+            try {
+                String[] commandArr = new String[] {"cmd", "/C", command};
+                process = Runtime.getRuntime().exec(commandArr);
+                br = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
+                process.getOutputStream().flush();
+                String line = null;
+                while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
+                    for (String f : filters) {
+                        if (line.contains(f)) {
+                            callOnSuccess(listener, line);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                callOnFailure(listener, e.getMessage());
+            } finally {
+                CloseUtil.close(br);
+                if (process != null) {
+                    CloseUtil.close(process.getOutputStream());
+                }
+                callOnSuccess(listener, command + " over");
+            }
+        }
+    }
 }

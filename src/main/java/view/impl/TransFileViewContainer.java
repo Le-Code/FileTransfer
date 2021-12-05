@@ -1,6 +1,7 @@
 package view.impl;
 
 import dao.ExecWorker;
+import entity.ConfigInfo;
 import listener.LogCallback;
 import listener.RuntimeExecListener;
 import view.BaseFileView;

@@ -19,7 +19,9 @@
             <children>
               <component id="ed84" class="javax.swing.JTextPane" binding="ta_showLog">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <font size="18"/>
+                </properties>
               </component>
             </children>
           </scrollpane>

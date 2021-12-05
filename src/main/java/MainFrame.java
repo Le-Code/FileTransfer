@@ -2,10 +2,7 @@ import dao.ExecWorker;
 import entity.ConfigInfo;
 import listener.LogCallback;
 import view.SubView;
-import view.impl.CustomCommandView;
-import view.impl.ExecFileViewContainer;
-import view.impl.InstallHapViewContainer;
-import view.impl.TransFileViewContainer;
+import view.impl.*;
 import view.ViewContainer;
 
 import javax.swing.*;
@@ -15,7 +12,6 @@ public class MainFrame implements LogCallback {
     private JPanel mainContainer;
     private JTabbedPane contentTabbedPane;
     private JPanel panel_subView;
-    private JSplitPane jsp_main;
     private SubView subView;
 
 
@@ -52,6 +48,8 @@ public class MainFrame implements LogCallback {
         contentTabbedPane.add(execFileViewContainer.getView(), "执行脚本");
         ViewContainer customCommandContainer = new CustomCommandView(this);
         contentTabbedPane.add(customCommandContainer.getView(), "自定义按钮");
+        ViewContainer logContainer = new DeviceLogView((this));
+        contentTabbedPane.add(logContainer.getView(), "查看log");
         subView = new SubView(this);
         panel_subView.add(subView.getView());
     }

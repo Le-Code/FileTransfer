@@ -24,8 +24,13 @@ public class HdcCommandExecutor extends CommandExecutor {
                         return;
                     }
                 }
+                String installCommand = configInfo.getHdcInstallCommand();
+                if (installCommand == null) {
+                    callOnFailure(listener, "hdc install command not config");
+                    return;
+                }
                 for (String hapPath : execPaths) {
-                    String command = "hdc install " + hapPath;
+                    String command = installCommand + " " + hapPath;
                     executeSyncString(command, listener);
                 }
             }
@@ -35,20 +40,42 @@ public class HdcCommandExecutor extends CommandExecutor {
     @Override
     public void sendFile(List<String> srcPaths, String dstPath, boolean reboot, RuntimeExecListener listener) {
         if (worker == null) {
-            listener.onFailure("application error");
+            callOnFailure(listener, "application error");
             return;
         }
         worker.pushWork(new Runnable() {
             @Override
             public void run() {
+                String pushCommand = configInfo.getHdcFileSendCommand();
+                if (pushCommand == null) {
+                    callOnFailure(listener, "hdc file send command not config");
+                    return;
+                }
                 for (String srcPath : srcPaths) {
-                    String command = "hdc file send " + srcPath + " " + dstPath;
+                    String command = pushCommand + " " + srcPath + " " + dstPath;
                     executeSyncString(command, listener);
                 }
                 if (reboot) {
-                    executeSyncString("hdc shell reboot", null);
+                    String rebootCommand = configInfo.getHdcRebootCommand();
+                    if (rebootCommand == null) {
+                        callOnFailure(listener, "adb reboot command not config");
+                        return;
+                    }
+                    executeSyncString(rebootCommand, null);
                 }
             }
         });
+    }
+
+    @Override
+    public void log(String filter, RuntimeExecListener listener) {
+        String command = configInfo.getHdcLogCommand();
+        if (command == null) {
+            callOnFailure(listener, "hdc command is not config");
+            return;
+        }
+        Runnable logRunnable = new LogRunnable(command, filter, listener);
+        logThread = new Thread(logRunnable);
+        logThread.start();
     }
 }

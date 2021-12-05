@@ -45,6 +45,7 @@ public class SubView implements ViewContainer{
         Document doc = ta_showLog.getStyledDocument();
         try {
             doc.insertString(doc.getLength(), txt, set);
+            ta_showLog.setCaretPosition(doc.getLength());
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
