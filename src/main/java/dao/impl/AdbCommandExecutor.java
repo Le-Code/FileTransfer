@@ -17,20 +17,15 @@ public class AdbCommandExecutor extends CommandExecutor {
             @Override
             public void run() {
                 List<String> execPaths = new ArrayList<>(hapPaths);
-                if (sign) {
-                    execPaths = signHap(hapPaths, listener);
-                    if (execPaths == null) {
-                        callOnFailure(listener, "signed error");
-                        return;
-                    }
-                }
                 String installCommand = configInfo.getAdbInstallCommand();
                 if (installCommand == null) {
                     callOnFailure(listener, "adb install command not config");
                     return;
                 }
                 for (String hapPath : execPaths) {
-                    String command = installCommand + " " + hapPath;
+                    String command = "adb push " + hapPath + " " + dstPath;
+                    executeSyncString(command, listener);
+                    command = installCommand + " " + dstPath;
                     executeSyncString(command, listener);
                 }
             }

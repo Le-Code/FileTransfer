@@ -23,10 +23,16 @@
                   <text value="hdc"/>
                 </properties>
               </component>
-              <component id="b4541" class="javax.swing.JButton" binding="btn_clear">
+              <component id="82a93" class="javax.swing.JButton" binding="btn_clearDeviceLog">
                 <constraints/>
                 <properties>
-                  <text value="清空日志"/>
+                  <text value="清空device日志"/>
+                </properties>
+              </component>
+              <component id="2a458" class="javax.swing.JButton" binding="btn_init">
+                <constraints/>
+                <properties>
+                  <text value="初始化"/>
                 </properties>
               </component>
               <component id="8e46c" class="javax.swing.JButton" binding="btn_stop">
@@ -35,10 +41,10 @@
                   <text value="停止"/>
                 </properties>
               </component>
-              <component id="2a458" class="javax.swing.JButton" binding="btn_init">
+              <component id="b4541" class="javax.swing.JButton" binding="btn_clear">
                 <constraints/>
                 <properties>
-                  <text value="初始化"/>
+                  <text value="清空桌面"/>
                 </properties>
               </component>
             </children>

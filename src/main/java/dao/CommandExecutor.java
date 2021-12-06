@@ -143,33 +143,6 @@ public abstract class CommandExecutor {
         });
     }
 
-    protected List<String> signHap(List<String> hapPaths, RuntimeExecListener listener) {
-        List<String> signedPaths = new ArrayList<>();
-        ConfigInfo configInfo = ConfigInfo.getInstance();
-        if (!configInfo.checkSignInfo()) {
-            return null;
-        }
-        for (String hapPath : hapPaths) {
-            int lastSepIdx = hapPath.lastIndexOf(File.separator);
-            String dir = hapPath.substring(0, lastSepIdx);
-            int lastDotIdx = hapPath.lastIndexOf(".");
-
-            String suffix = hapPath.substring(lastDotIdx);
-            String fileName = hapPath.substring(lastSepIdx + 1, lastDotIdx);
-            String signedName = fileName + "_signed" + suffix;
-            String signedPath = dir + File.separator + signedName;
-
-            signedPaths.add(signedPath);
-            String command = "jar " + configInfo.getSignJarPath() + " " +
-                             "username " + configInfo.getSignUserName() + " " +
-                             "password " + configInfo.getSignPasswd() + " " +
-                             "input " + hapPath + " " +
-                             "output " + signedPath;
-            executeSyncString(command, listener);
-        }
-        return signedPaths;
-    }
-
     public void executeFile(File file, RuntimeExecListener listener) {
         if (!file.exists()) {
             listener.onFailure("file not exist");
@@ -221,11 +194,17 @@ public abstract class CommandExecutor {
                 br = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
                 process.getOutputStream().flush();
                 String line = null;
+                boolean flag = true;
                 while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
+                    flag = true;
                     for (String f : filters) {
-                        if (line.contains(f)) {
-                            callOnSuccess(listener, line);
+                        if (!line.contains(f)) {
+                            flag = false;
+                            break;
                         }
+                    }
+                    if (flag) {
+                        callOnSuccess(listener, line);
                     }
                 }
             } catch (IOException e) {

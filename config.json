@@ -1,9 +1,4 @@
 {
-  "sign": {
-    "jarPath": "sss",
-    "username": "aaaa",
-    "password": "sdd"
-  },
   "initExecEnv": {
     "adb": [
       "adb kill-service",
@@ -22,12 +17,14 @@
     "hdc": "hdc shell reboot"
   },
   "install": {
-    "adb": "adb install",
+    "adb": "adb shell install",
     "hdc": "hdc app install"
   },
   "log": {
     "adb": "adb shell logcat",
-    "hdc": "hdc shell hilogcat"
+    "adb_clear": "adb shell logcat -r",
+    "hdc": "hdc shell hilogcat",
+    "hdc_clear": "hdc shell hilogcat -r"
   },
   "customCommand": {
     "commands": [

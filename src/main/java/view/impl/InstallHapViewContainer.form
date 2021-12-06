@@ -23,12 +23,6 @@
                   <text value="安装"/>
                 </properties>
               </component>
-              <component id="30768" class="javax.swing.JCheckBox" binding="cb_sign">
-                <constraints/>
-                <properties>
-                  <text value="签名"/>
-                </properties>
-              </component>
             </children>
           </grid>
         </children>

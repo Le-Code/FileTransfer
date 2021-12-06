@@ -9,7 +9,6 @@ import java.util.*;
 public class ConfigInfo {
     public static ConfigInfo instance;
 
-    private SignInfo signInfo;
     private InitExecEnvInfo initExecEnvInfo;
     private List<CustomCommandInfo> customCommandInfoList;
     private SendFileCommand sendFileCommand;
@@ -31,11 +30,11 @@ public class ConfigInfo {
     }
 
     private void initConfig() {
-        jsonObject = JsonUtil.readJsonFile("config.json");
+        jsonObject = JsonUtil.readJsonFile(ConstantValue.configPath);
         if (jsonObject == null) {
+            System.out.println("load config file error");
             return;
         }
-        initSignInfo();
         initExecEnv();
         initCustomCommand();
         initSendFileInfo();
@@ -50,8 +49,10 @@ public class ConfigInfo {
             return;
         }
         String adbCommand = signObj.getString("adb");
+        String adbClearCommand = signObj.getString("adb_clear");
         String hdcCommand = signObj.getString("hdc");
-        logCommand = new LogCommand(adbCommand, hdcCommand);
+        String hdcClearCommand = signObj.getString("hdc_clear");
+        logCommand = new LogCommand(adbCommand, hdcCommand, adbClearCommand, hdcClearCommand);
     }
 
     private void initInstallCommand() {
@@ -124,29 +125,6 @@ public class ConfigInfo {
         }
     }
 
-    private void initSignInfo() {
-        JSONObject signObj = jsonObject.getJSONObject("sign");
-        if (signObj == null) {
-            return;
-        }
-        String jarPath = signObj.getString("jarPath");
-        String username = signObj.getString("username");
-        String password = signObj.getString("password");
-        signInfo = new SignInfo(username, password, jarPath);
-    }
-
-    public String getSignJarPath() {
-        return signInfo != null ? signInfo.getJarPath() : null;
-    }
-
-    public String getSignUserName() {
-        return signInfo != null ? signInfo.getUserName() : null;
-    }
-
-    public String getSignPasswd() {
-        return signInfo != null ? signInfo.getPassword() : null;
-    }
-
     public String getAdbFileSendCommand() {
         return sendFileCommand != null ? sendFileCommand.getAdbCommand() : null;
     }
@@ -161,10 +139,6 @@ public class ConfigInfo {
 
     public String getHdcRebootCommand() {
         return rebootCommand != null ? rebootCommand.getHdcCommand() : null;
-    }
-
-    public boolean checkSignInfo() {
-        return getSignJarPath() != null && getSignUserName() != null && getSignPasswd() != null;
     }
 
     public List<String> getAdbInitExecInfo() {
@@ -191,6 +165,14 @@ public class ConfigInfo {
         return logCommand != null ? logCommand.getHdcCommand() : null;
     }
 
+    public String getAdbLogClearCommand() {
+        return logCommand != null ? logCommand.getAdbClearCommand() : null;
+    }
+
+    public String getHdcLogClearCommand() {
+        return logCommand != null ? logCommand.getHdcClearCommand() : null;
+    }
+
     public List<CustomCommandInfo> getCustomCommandInfoList() {
         return this.customCommandInfoList;
     }
@@ -201,42 +183,6 @@ public class ConfigInfo {
 
     public boolean checkInitExecInfo() {
         return initExecEnvInfo != null;
-    }
-
-    private class SignInfo {
-        private String userName;
-        private String password;
-        private String jarPath;
-
-        public SignInfo(String userName, String password, String jarPath) {
-            this.userName = userName;
-            this.password = password;
-            this.jarPath = jarPath;
-        }
-
-        public String getUserName() {
-            return userName;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public String getJarPath() {
-            return jarPath;
-        }
-
-        public void setJarPath(String jarPath) {
-            this.jarPath = jarPath;
-        }
     }
 
     private class InitExecEnvInfo {
@@ -376,10 +322,14 @@ public class ConfigInfo {
     private class LogCommand {
         private String adbCommand;
         private String hdcCommand;
+        private String adbClearCommand;
+        private String hdcClearCommand;
 
-        public LogCommand(String adbCommand, String hdcCommand) {
+        public LogCommand(String adbCommand, String hdcCommand, String adbClearCommand, String hdcClearCommand) {
             this.adbCommand = adbCommand;
             this.hdcCommand = hdcCommand;
+            this.adbClearCommand = adbClearCommand;
+            this.hdcClearCommand = hdcClearCommand;
         }
 
         public String getAdbCommand() {
@@ -396,6 +346,22 @@ public class ConfigInfo {
 
         public void setHdcCommand(String hdcCommand) {
             this.hdcCommand = hdcCommand;
+        }
+
+        public String getAdbClearCommand() {
+            return adbClearCommand;
+        }
+
+        public void setAdbClearCommand(String adbClearCommand) {
+            this.adbClearCommand = adbClearCommand;
+        }
+
+        public String getHdcClearCommand() {
+            return hdcClearCommand;
+        }
+
+        public void setHdcClearCommand(String hdcClearCommand) {
+            this.hdcClearCommand = hdcClearCommand;
         }
     }
 }

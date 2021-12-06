@@ -1,5 +1,6 @@
 import dao.ExecWorker;
 import entity.ConfigInfo;
+import entity.ConstantValue;
 import listener.LogCallback;
 import view.SubView;
 import view.impl.*;
@@ -8,12 +9,12 @@ import view.ViewContainer;
 import javax.swing.*;
 
 public class MainFrame implements LogCallback {
+    public static String configPath;
 
     private JPanel mainContainer;
     private JTabbedPane contentTabbedPane;
     private JPanel panel_subView;
     private SubView subView;
-
 
     public MainFrame() {
         initInstance();
@@ -55,6 +56,10 @@ public class MainFrame implements LogCallback {
     }
 
     public static void main(String[] args) {
+        if (args != null && args.length > 0) {
+            ConstantValue.configPath = args[0];
+            System.out.println(ConstantValue.configPath);
+        }
         JFrame frame = new JFrame("MainFrame");
         MainFrame mainFrame = new MainFrame();
         frame.setContentPane(mainFrame.mainContainer);

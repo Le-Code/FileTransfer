@@ -13,7 +13,6 @@ import java.util.List;
 public class InstallHapViewContainer extends BaseFileView {
     private JPanel MainContainer;
     private JButton btn_install;
-    private JCheckBox cb_sign;
     private JPanel panel_baseFile;
 
     public InstallHapViewContainer(LogCallback logCallback) {
@@ -36,7 +35,7 @@ public class InstallHapViewContainer extends BaseFileView {
             return;
         }
         addRecord();
-        commandExecutor.installHap(srcPaths, "", cb_sign.isSelected(), new RuntimeExecListener() {
+        commandExecutor.installHap(srcPaths, "sdcard/test_xx.hap", false, new RuntimeExecListener() {
             @Override
             public void onSuccess(String str) {
                 logCallback.showSuccessLog(str, true);

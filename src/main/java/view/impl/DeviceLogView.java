@@ -29,6 +29,7 @@ public class DeviceLogView implements ViewContainer, RuntimeExecListener {
     private JButton btn_clear;
     private JButton btn_stop;
     private JButton btn_init;
+    private JButton btn_clearDeviceLog;
 
     private List<String> historyFilter;
     private int filterHistoryIdx = 0;
@@ -94,7 +95,9 @@ public class DeviceLogView implements ViewContainer, RuntimeExecListener {
             public void actionPerformed(ActionEvent e) {
                 ConfigInfo configInfo = ConfigInfo.getInstance();
                 if (!configInfo.checkInitExecInfo()) {
-                    logCallback.showFailureLog("check initExecEnv failure", true);
+                    if (logCallback != null) {
+                        logCallback.showFailureLog("check initExecEnv failure", true);
+                    }
                 }
                 List<String> commands = cb_hdc.isSelected() ?
                         configInfo.getHdcInitExecInfo() : configInfo.getAdbInitExecInfo();
@@ -163,6 +166,30 @@ public class DeviceLogView implements ViewContainer, RuntimeExecListener {
             @Override
             public void keyReleased(KeyEvent e) {
 
+            }
+        });
+
+        btn_clearDeviceLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ConfigInfo configInfo = ConfigInfo.getInstance();
+                String command = cb_hdc.isSelected() ?
+                        configInfo.getHdcLogClearCommand() : configInfo.getAdbLogClearCommand();
+                commandExecutor.executeAsyncString(command, new RuntimeExecListener() {
+                    @Override
+                    public void onSuccess(String str) {
+                        if (logCallback != null) {
+                            logCallback.showSuccessLog(str, true);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String str) {
+                        if (logCallback != null) {
+                            logCallback.showFailureLog(str, true);
+                        }
+                    }
+                });
             }
         });
     }

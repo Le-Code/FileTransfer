@@ -17,13 +17,6 @@ public class HdcCommandExecutor extends CommandExecutor {
             @Override
             public void run() {
                 List<String> execPaths = new ArrayList<>(hapPaths);
-                if (sign) {
-                    execPaths = signHap(hapPaths, listener);
-                    if (execPaths == null) {
-                        listener.onFailure("signed error");
-                        return;
-                    }
-                }
                 String installCommand = configInfo.getHdcInstallCommand();
                 if (installCommand == null) {
                     callOnFailure(listener, "hdc install command not config");
